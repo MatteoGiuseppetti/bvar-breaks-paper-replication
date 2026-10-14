@@ -31,7 +31,7 @@ From the repository directory:
 
 ~~~powershell
 Rscript scripts/check_inputs.R
-Rscript -e "install.packages('posterior')"
+Rscript -e "if (!requireNamespace('posterior', quietly=TRUE)) install.packages('posterior')"
 powershell -ExecutionPolicy Bypass -File scripts/run_full_thesis.ps1
 ~~~
 
