@@ -12,6 +12,7 @@ As of **2026-10-14**, this repository is a **work in progress**, with paper-only
 - [x] Confirmed UNRATE has no usable October 2025 entry in the archived snapshot; November and December observations are present.
 - [x] Documented that the archived original R script runs the full thesis program, not just the paper subset.
 - [x] Extracted separate paper-only code paths: final three-break dispersed-start simulation, baseline K=4 and robustness K=8.
+- [x] GitHub Actions CI: statement-level extraction and input-snapshot SHA tests **PASSED**; all five paper-only R scripts **PARSED** successfully using R on a GitHub-hosted runner (2026-10-14). This is not an execution of the estimators.
 - [x] Preserved original scientific source ranges in the extracted modules and added a source-fidelity audit (not an R runtime validation).
 
 ## Pending scientific validation — C09
