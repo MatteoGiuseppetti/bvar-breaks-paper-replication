@@ -48,3 +48,17 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Generated local replication outputs (never commit unreviewed results)
+/results/
+/figures_chapter6/
+/BVAR_real_data_final_results.rds
+/Rplots.pdf
+/*.Rout
+*.log
+
+# Local secrets and operating-system files
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
