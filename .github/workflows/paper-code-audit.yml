@@ -24,3 +24,16 @@ jobs:
         uses: actions/checkout@v4
       - name: Audit thesis snapshots and extraction statements
         run: python3 scripts/audit_paper_extraction.py
+
+  r-syntax:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout paper repository
+        uses: actions/checkout@v4
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+      - name: Parse selected R files without running MCMC or empirical estimation
+        run: |
+          Rscript -e 'paths <- c("code/paper/common.R", "code/paper/simulation_functions.R", "code/paper/simulation_three_breaks.R", "code/paper/empirical_application.R", "code/paper/run_paper.R"); invisible(lapply(paths, parse)); cat("PASS: all paper-only R files parse successfully\\n")'
