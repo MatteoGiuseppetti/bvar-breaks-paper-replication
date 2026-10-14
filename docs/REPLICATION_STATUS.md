@@ -1,6 +1,6 @@
 # Reproduction status and acceptance gates
 
-As of **2026-10-14**, this repository is a **work in progress**. The original thesis code and the three input CSV snapshots have been transferred with matching Git blob hashes. This establishes file provenance, **not** numerical reproducibility.
+As of **2026-10-14**, this repository is a **work in progress**, with paper-only code extracted but numerical results still unverified. The original thesis code and the three input CSV snapshots have been transferred with matching Git blob hashes. This establishes file provenance, **not** numerical reproducibility.
 
 ## Completed static checks
 
@@ -10,7 +10,9 @@ As of **2026-10-14**, this repository is a **work in progress**. The original th
 - [x] Copied input CSVs byte-identical to the original thesis versions.
 - [x] Reviewed the top-level external package dependency: the source calls `posterior::rhat`, `posterior::ess_bulk`, and `posterior::ess_tail`; remaining numerical functions use R and recommended/base packages.
 - [x] Confirmed UNRATE has no usable October 2025 entry in the archived snapshot; November and December observations are present.
-- [x] Documented that the existing R script runs the full thesis program, not just the paper subset.
+- [x] Documented that the archived original R script runs the full thesis program, not just the paper subset.
+- [x] Extracted separate paper-only code paths: final three-break dispersed-start simulation, baseline K=4 and robustness K=8.
+- [x] Preserved original scientific source ranges in the extracted modules and added a source-fidelity audit (not an R runtime validation).
 
 ## Pending scientific validation — C09
 
@@ -23,7 +25,8 @@ As of **2026-10-14**, this repository is a **work in progress**. The original th
 - [ ] Reproduce the K=8 comparison, noting the effective-sample change.
 - [ ] Reproduce the paper's *selected* three-break simulation and its MCMC posterior/diagnostic summaries, with fixed seeds.
 - [ ] Compare all paper tables/figures against captured output, document rounding differences, and resolve discrepancies.
-- [ ] Implement and verify a scoped paper-only runner without changing numerical results.
+- [x] Extract and document a scoped paper-only runner while preserving original scientific statements (static mapping). 
+- [ ] Execute the scoped runner and establish numerical equivalence with the original thesis program for the selected outputs.
 - [ ] Freeze dependencies and publish a reproducible release only after checks pass.
 
 ## Pending editorial work — C07
