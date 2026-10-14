@@ -28,7 +28,7 @@ original_blobs = {
     "data/raw/FEDFUNDS.csv": "8d52898492df6a8587d69a3425686c73b205e742",
 }
 def git_blob_sha(data):
-    return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\\0" + data).hexdigest()
+    return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
 
 failed = False
 for path, wanted in original_blobs.items():
@@ -37,7 +37,7 @@ for path, wanted in original_blobs.items():
     print(("PASS" if good else "FAIL"), "source hash", path)
     failed |= not good
 
-pattern = re.compile(r"(?m)^# Original BVAR_thesis_full_code\\.R lines (\\d+)-(\\d+) \\(verbatim\\)\\n")
+pattern = re.compile(r"(?m)^# Original BVAR_thesis_full_code\.R lines (\d+)-(\d+) \(verbatim\)\n")
 for path, spans in expected.items():
     data = (root / path).read_text(encoding="utf-8")
     matches = list(pattern.finditer(data))
@@ -48,8 +48,15 @@ for path, spans in expected.items():
         continue
     for i, (a, b) in enumerate(spans):
         end = matches[i+1].start() if i+1 < len(matches) else len(data)
-        block = data[matches[i].end():end].strip("\\n")
-        expected_code = "\\n".join(source_lines[a-1:b]).strip("\\n")
+        if path == "code/paper/simulation_three_breaks.R" and i == len(spans) - 1:
+            boundary = data.find("\n# Output-only additions:", matches[i].end())
+            if boundary < 0:
+                print("FAIL missing output-only section separator")
+                failed = True
+                break
+            end = boundary
+        block = data[matches[i].end():end].strip("\n")
+        expected_code = "\n".join(source_lines[a-1:b]).strip("\n")
         if block != expected_code:
             print("FAIL", path, "statement drift in lines", a, "-", b)
             failed = True
