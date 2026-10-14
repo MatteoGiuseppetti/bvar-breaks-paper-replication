@@ -1,0 +1,26 @@
+name: Paper code extraction audit
+
+on:
+  push:
+    paths:
+      - "code/**"
+      - "data/raw/**"
+      - "scripts/audit_paper_extraction.py"
+      - ".github/workflows/paper-code-audit.yml"
+  pull_request:
+    paths:
+      - "code/**"
+      - "data/raw/**"
+      - "scripts/audit_paper_extraction.py"
+      - ".github/workflows/paper-code-audit.yml"
+
+jobs:
+  static-extraction:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout paper repository
+        uses: actions/checkout@v4
+      - name: Audit thesis snapshots and extraction statements
+        run: python3 scripts/audit_paper_extraction.py
