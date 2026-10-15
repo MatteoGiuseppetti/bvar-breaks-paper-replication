@@ -1,0 +1,57 @@
+name: Restore locked article R environment
+
+on:
+  push:
+    paths:
+      - ".github/workflows/locked-env-check.yml"
+      - ".gitattributes"
+      - "renv.lock"
+      - "renv/**"
+      - "scripts/restore_environment.R"
+      - "scripts/check_environment.R"
+      - "scripts/run_paper_locked.R"
+      - "scripts/run_paper.ps1"
+  pull_request:
+    paths:
+      - ".github/workflows/locked-env-check.yml"
+      - ".gitattributes"
+      - "renv.lock"
+      - "renv/**"
+      - "scripts/restore_environment.R"
+      - "scripts/check_environment.R"
+      - "scripts/run_paper_locked.R"
+      - "scripts/run_paper.ps1"
+
+permissions:
+  contents: read
+
+jobs:
+  restore-and-check:
+    name: Restore pinned packages on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - name: Check out paper repository
+        uses: actions/checkout@v4
+      - name: Install recorded R version
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "4.6.1"
+          use-public-rspm: true
+      - name: Install renv bootstrapping package
+        run: Rscript --vanilla -e "install.packages('renv', repos='https://cloud.r-project.org')"
+      - name: Restore exact dependency versions
+        run: Rscript --vanilla scripts/restore_environment.R
+      - name: Verify isolated project library
+        run: Rscript --vanilla scripts/check_environment.R
+      - name: Validate immutable input snapshots
+        run: Rscript --vanilla scripts/check_inputs.R
+      - name: Verify extracted article code and frozen inputs
+        run: python scripts/audit_paper_extraction.py
+      - name: Parse article-only R modules (do not run models)
+        run: |
+          Rscript --vanilla -e "invisible(lapply(c('code/paper/common.R','code/paper/simulation_functions.R','code/paper/simulation_three_breaks.R','code/paper/empirical_application.R','code/paper/run_paper.R','scripts/run_paper_locked.R'), parse)); cat('PASS: all paper R modules parse successfully\\n')"

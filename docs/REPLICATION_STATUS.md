@@ -1,56 +1,59 @@
-# Reproduction status and acceptance gates
+# Replication status and acceptance gates
 
-As of **2026-10-15**, the author has executed the paper-only empirical and selected simulation routes and the original full thesis program on Windows/R. Their numerical outputs were compared with the thesis at published precision. **C09 numerical verification: PASS for the documented author-executed scope**; this is not bitwise historical certification or an independent cross-platform release. See the [C09 numerical report](C09_VERIFICATION_2026-10-15.md) and [49-row comparison summary](C09_NUMERICAL_COMPARISONS_2026-10-15.csv). Static source/data provenance is documented separately.
+**State on 2026-10-15 — article repository only.** The dissertation is a separate historical project used as the source of copied statements/data, not as a linked development environment or operational dependency.
 
-## Completed static checks
+## Scientific verification: C09 (already completed in the documented scope)
 
-- [x] New paper repository separate from the thesis repository.
-- [x] Original thesis repository remains unchanged.
-- [x] Copied R script byte-identical to the original thesis script.
-- [x] Copied input CSVs byte-identical to the original thesis versions.
-- [x] Reviewed the top-level external package dependency: the source calls `posterior::rhat`, `posterior::ess_bulk`, and `posterior::ess_tail`; remaining numerical functions use R and recommended/base packages.
-- [x] Confirmed UNRATE has no usable October 2025 entry in the archived snapshot; November and December observations are present.
-- [x] Documented that the archived original R script runs the full thesis program, not just the paper subset.
-- [x] Extracted separate paper-only code paths: final three-break dispersed-start simulation, baseline K=4 and robustness K=8.
-- [x] GitHub Actions CI: statement-level extraction and input-snapshot SHA tests **PASSED**; all five paper-only R scripts **PARSED** successfully using R on a GitHub-hosted runner (2026-10-14). This is not an execution of the estimators.
-- [x] Preserved original scientific source ranges in the extracted modules and added a source-fidelity audit (not an R runtime validation).
+**C09 numerical comparison: PASS** for the author's **fixed-source, fixed-data, Windows 11 / R 4.6.1** executions, as established before this documentation/environment update. The selected paper simulation and empirical paths and the original full-source comparison were executed, and the compared numerical values matched dissertation tables at their published precision.
 
-## Completed user-executed numerical verification — C09 (2026-10-15)
+- [C09 report: exact evidence, versions, sources and limitations](C09_VERIFICATION_2026-10-15.md)
+- [49-row comparison summary](C09_NUMERICAL_COMPARISONS_2026-10-15.csv)
 
-- [x] R 4.6.1, `posterior` 1.7.0, Windows 11 x64 (build 26200) and LAPACK 3.12.1 recorded. Elapsed runtime and peak memory were **not measured**.
-- [x] Original thesis R program ran against archived CSV snapshots and exited successfully; original full-run log and generated figures were reviewed.
-- [x] Paper-only empirical driver executed; baseline profile log marginal likelihoods for m=0,...,4 and dates 1985Q1 / 2008Q3 / 2015Q4 reproduced.
-- [x] Baseline calendar/effective regime sizes, modal models, model probabilities, all displayed PIPs, stability measures and univariate/LM diagnostic tables compared to thesis/manuscript (published precision).
-- [x] K=8 robustness results compared, explicitly preserving the different effective sample.
-- [x] Paper's selected three-break simulation ran with four 150,000-iteration chains and fixed seeds; posterior summaries, gamma models, acceptance rates, R-hat and ESS compared.
-- [x] Additional thesis simulations (one break, two breaks, exact-vs-MCMC, m=0/1/2 selection) executed and printed summaries compared at published precision.
-- [x] Final simulation output from paper-only runner and corresponding original thesis run compared; matching numeric log span and final summary documented.
-- [x] Plots qualitatively checked, *not* verified pixel for pixel.
-- [x] Evidence manifest, user-delivered ZIP archive, and [49-row machine-readable comparison summary](C09_NUMERICAL_COMPARISONS_2026-10-15.csv) prepared. The public repo tracks the manifest/report and CSV **but not the full generated evidence ZIP**.
+This is **not** independent third-party replication, a bit-for-bit comparison with unavailable historical run outputs, cross-platform reproducibility, a software release or proof of statistical consistency.
 
-### Provenance / limitations intentionally left open
+The full historical run served as a **one-time source-validation comparison**: it is not an article runtime prerequisite. The public article repository contains a frozen reference copy, but the executable paper path is `code/paper/` only.
 
-- [ ] Measure wall-clock runtime and peak resource demands on reference hardware (not needed for the fixed-run numerical comparison).
-- [ ] Archive locally the **not-uploaded** `simulation_three_breaks_final.rds` (2,483,259 bytes; user-reported SHA-256 recorded in the C09 report), together with the delivered ZIP.
-- [ ] Record original empirical `run.log` and `session_info.txt` if retained; they were not uploaded, although the empirical RDS and plots were independently supplied.
-- [ ] Freeze dependencies and test a versioned release across a second, independent environment. **Not claimed completed.**
-- [ ] Compare bitwise against original historical run artifacts if these become available; the thesis tables show rounded numbers only.
+## Source and input integrity
 
-### Interpretation
+- [x] Distinct article-only execution path, no runtime clone/import from the thesis repository.
+- [x] Frozen copy of complete historical R script for statement-level comparison.
+- [x] Frozen PCECTPI/UNRATE/FEDFUNDS input snapshots.
+- [x] Statement-level source extraction audit.
+- [x] GitHub Actions static extraction, input-hash and R syntax checks passed on 2026-10-14.
+- [x] Selected three-break final-chain simulation and empirical K=4/K=8 results checked under C09.
+- [x] C09 report, original-artifact hash manifest and 49 representative numerical comparisons documented.
 
-**C09 numeric gate: PASS, fixed inputs and author-run environment.** No discrepancies were found in the reported-precision outputs compared. This is a traceable user-executed replication; no third-party independent run and no proof of broader sampler validity. The historical preliminary three-break run (poor diagnostics) is distinct from the final 150,000-iteration experiment.
+`scripts/check_inputs.R` checks input structures and special missingness, not fitted model results. `scripts/audit_paper_extraction.py` checks copied statements and Git blob hashes, not runtime semantics.
 
-## Editorial work — C07 (independent from C09)
+## R environment engineering (separate from scientific C09)
 
-A standalone Online Appendix draft covering the omitted thesis simulation experiments has been prepared. It remains subject to adviser review and publication decisions; source-code availability in this repository is not a substitute for editorial approval.
+- [x] Reference R version **4.6.1** and direct external dependency `posterior` **1.7.0** identified from the C09 environment.
+- [x] Project-local `renv` restoration/check scripts and locked-library paper runner added, without altering scientific R model statements.
+- [x] Generated and committed `renv.lock` (R 4.6.1, `posterior` 1.7.0, 20 total packages), tracking direct and required transitive dependencies.
+- [x] Fresh Windows and Linux GitHub-hosted runners both restored the locked library and passed input CSV **byte-hash**, source-extraction and R syntax checks ([successful CI execution](https://github.com/MatteoGiuseppetti/bvar-breaks-paper-replication/actions/runs/38754513020)). **No model estimation was run in CI.**
+- [ ] Independent clean Windows/Linux **full article numerical run using the new lock** and result-by-result comparison. **Not certified by lock generation.**
+- [ ] Historical Windows indirect-dependency inventory comparison (not available in the original C09 evidence).
 
-## Nonclaims and scientific cautions
+See [environment setup](ENVIRONMENT.md). Package versions are now pinned in the generated, committed and clean-runner-tested `renv.lock`. This verifies the **package environment**, not independent numerical reproduction of the paper.
 
-- Static Git file provenance alone does **not** establish numerical reproduction; the scope-limited numerical finding is instead supported by the author-executed logs/RDS and thesis comparison in the C09 report.
-- The five profile break-count scores do not define posterior probabilities over break counts.
-- The three-break MCMC simulation is one generated sample and does not establish general frequentist coverage.
-- Changing K from 4 to 8 changes both the admissible lag-model set and the valid likelihood sample.
-- A posterior-mean stability check does not prove stability across all posterior draws.
-- Residual p-values are conventional post-selection diagnostics, not posterior predictive checks.
+## Provenance and work still open
 
-For the full original outputs and original-byte SHA-256 manifest, preserve the user-delivered evidence archive separately: generated RDS/log/PDF outputs are intentionally ignored by Git. This repository publishes a numerical comparison report and machine-readable summary, not a complete public release of those run artifacts.
+- [ ] Preserve the original user-delivered full evidence ZIP and the separately retained `simulation_three_breaks_final.rds` (2,483,259 bytes) locally.
+- [ ] Recover the original empirical run log and session metadata, if available; C09 assessed its RDS/figures without them.
+- [ ] Optionally measure runtime and peak memory on reference hardware.
+- [ ] Optionally test the locked package setup and numerical output on a second independent system, prior to versioned release.
+- [ ] Release metadata: citation, license, version/DOI and any journal-required format to be decided after editorial feedback.
+- [ ] Compare bitwise to historical reference artifacts *only if those artifacts later become available*.
+
+## Editorial status: separate from code
+
+The article manuscript and standalone Online Appendix are drafted but **not final, approved or published to this repository**. The pending supervisor review and eventual journal decisions do not change C09's documented numerical outcome. No publication of manuscript files is authorized by this documentation update.
+
+## Scientific nonclaims
+
+- Empirical break-count scores maximize/profile integrated marginal likelihood across partitions; they are **not** posterior break-count masses integrated over all partitions.
+- The old exact two-break benchmark compares exact vs MCMC on a **restricted local support**, not the full global space.
+- The selected final three-break result is from one generated dataset and does not establish frequentist coverage; its second break has comparatively weaker tail mixing.
+- K=8 changes both admissible model dimension and effective valid likelihood rows relative to K=4.
+- Posterior-mean stability checks are not stability statements about every posterior draw.
+- Conventional post-selection residual diagnostics are not posterior predictive checks.
