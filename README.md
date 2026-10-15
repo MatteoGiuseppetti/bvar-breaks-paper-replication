@@ -1,4 +1,4 @@
-# Bayesian VARs with Structural Breaks — Article and Supplementary Code
+# Bayesian VAR with lag selection — Article and Supplementary Code
 
 This repository contains the **self-contained R code and frozen input data for the research article** on structural breaks and regime-specific blockwise lag uncertainty, along with the experiments documented in its Supplementary Material.
 
