@@ -36,6 +36,10 @@ Do **not** change `renv.lock` simply to receive newer packages. The repository i
 
 The `renv/` project library, caches and staging files must remain untracked. The tracked `renv.lock` is the dependency record, while a generated `.Rprofile` is local-only: launch restoration and analysis using the explicit scripts above.
 
+## Clean-runner installation evidence
+
+On **2026-10-15**, [GitHub Actions clean restore](https://github.com/MatteoGiuseppetti/bvar-breaks-paper-replication/actions/runs/38754513020) completed successfully on both `ubuntu-latest` and `windows-latest` with R 4.6.1. Each job restored the lock, checked the project-local library and `posterior` version, checked CSV contents and original-byte hashes, and parsed the article R code. This certifies **environment setup on those CI runners**, not equality of estimated outputs.
+
 ## What has and has not been verified
 
 - **C09 already passed** for the author's original fixed-source Windows run and reported-precision comparisons to thesis tables; see the separate C09 report.

@@ -29,11 +29,12 @@ The full historical run served as a **one-time source-validation comparison**: i
 
 - [x] Reference R version **4.6.1** and direct external dependency `posterior` **1.7.0** identified from the C09 environment.
 - [x] Project-local `renv` restoration/check scripts and locked-library paper runner added, without altering scientific R model statements.
-- [x] GitHub workflow added to generate a **complete transitive** `renv.lock` on R 4.6.1 and validate the package environment.
+- [x] Generated and committed `renv.lock` (R 4.6.1, `posterior` 1.7.0, 20 total packages), tracking direct and required transitive dependencies.
+- [x] Fresh Windows and Linux GitHub-hosted runners both restored the locked library and passed input CSV **byte-hash**, source-extraction and R syntax checks ([successful CI execution](https://github.com/MatteoGiuseppetti/bvar-breaks-paper-replication/actions/runs/38754513020)). **No model estimation was run in CI.**
 - [ ] Independent clean Windows/Linux **full article numerical run using the new lock** and result-by-result comparison. **Not certified by lock generation.**
 - [ ] Historical Windows indirect-dependency inventory comparison (not available in the original C09 evidence).
 
-See [environment setup](ENVIRONMENT.md). Package versions are frozen by the lockfile once its generation workflow has **completed and committed it**. Do not mark the environment lock as fully verified until that CI result has been checked.
+See [environment setup](ENVIRONMENT.md). Package versions are now pinned in the generated, committed and clean-runner-tested `renv.lock`. This verifies the **package environment**, not independent numerical reproduction of the paper.
 
 ## Provenance and work still open
 
