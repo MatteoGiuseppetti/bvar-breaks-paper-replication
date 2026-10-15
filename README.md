@@ -2,6 +2,8 @@
 
 This repository contains the **self-contained R code and frozen input data for the research article** on structural breaks and regime-specific blockwise lag uncertainty, along with the experiments documented in its Supplementary Material.
 
+**Supplementary Material:** [Open the PDF (18 pages)](Supplementary_Material.pdf). Sections S1–S6 provide further specifications and diagnostics for the article; S7–S9 preserve additional one-/two-break and break-count experiments from the thesis; S10 documents code and input provenance. The numerical tables and extracted figures are existing historical results, not newly generated outputs.
+
 **Project boundary:** the dissertation is a **separate historical project**. Its code was consulted once to extract the *unchanged scientific statements* used here. There is no runtime dependency on that repository, no mirrored full thesis script and no full-thesis runner. The original dissertation repository is not part of this article's development workflow.
 
 ## Reproducible components
@@ -25,7 +27,7 @@ The Supplementary PDF describes *existing* thesis figures and tables; code execu
 
 ## Quick start: Windows PowerShell
 
-Install **R 4.6.1**, make `Rscript` available on `PATH`, and clone **this** repository. First install `renv` and restore the **20 pinned packages** (`posterior` 1.7.0 and its dependencies included):
+Install **R 4.6.1**, make `Rscript` available on `PATH`, and clone **this** repository. If you already have a local clone, open PowerShell inside its root and use `git pull --ff-only` rather than cloning again. Set up and check the **20 pinned R packages** (`posterior` 1.7.0 and its dependencies included) first; checks do **not** run estimation:
 
 ```powershell
 git clone https://github.com/MatteoGiuseppetti/bvar-breaks-paper-replication.git
@@ -34,7 +36,11 @@ Rscript --vanilla -e "install.packages('renv', repos='https://cloud.r-project.or
 Rscript --vanilla scripts/restore_environment.R
 Rscript --vanilla scripts/check_environment.R
 Rscript --vanilla scripts/check_inputs.R
+```
 
+After all three checks succeed, run the research components **one at a time** (the simulation routes may be very slow):
+
+```powershell
 # Main article empirical application: K=4 and K=8
 powershell -ExecutionPolicy Bypass -File scripts/run_paper.ps1 -Mode Empirical
 
@@ -44,6 +50,8 @@ powershell -ExecutionPolicy Bypass -File scripts/run_paper.ps1 -Mode Simulation
 # Supplementary historical simulations: S7, S8, S9 (computationally intensive)
 powershell -ExecutionPolicy Bypass -File scripts/run_supplementary.ps1
 ```
+
+**Run status:** completing without an error is only an execution check. To establish numerical reproducibility, compare the generated values to the manuscript and Supplementary tables and figures. The supplementary run has not yet been independently verified end to end.
 
 The paper and supplementary runners write to independent, ignored `results/paper_<mode>_<timestamp>/` and `results/supplementary_<timestamp>/` directories. The supplementary runner captures a log, records `session_info.txt` and saves the generated `results` (one-break) and `results_2b` (two-break/MCMC/model-selection) objects as separate RDS files. It does not run the article's three-break model or empirical analysis.
 
