@@ -26,6 +26,8 @@ python scripts/audit_paper_extraction.py
 
 The paper's executable scientific path is under `code/paper/` only. `code/reference/` is not sourced by that path; the optional `scripts/run_full_thesis.ps1` is a **legacy comparison utility**, not part of paper replication. The historical script expects CSVs in its working directory, so the legacy script runs in its own isolated output directory.
 
+A tracked `.gitattributes` rule (`data/raw/*.csv -text`) prohibits checkout line-ending conversion, preserving the **exact archived CSV bytes** on Windows as well as Linux. This is required for the hash audit.
+
 The original snapshots are **not updated from FRED**. The archived UNRATE series has a missing October 2025 observation; the original quarterly conversion uses November and December for 2025Q4. Input changes would break the source integrity audit and invalidate the fixed-data C09 comparison.
 
 The `renv` dependency lock concerns the article's **computing environment**, not its scientific methodology or its input provenance. The historical C09 Windows environment is reported separately in `docs/C09_VERIFICATION_2026-10-15.md`.

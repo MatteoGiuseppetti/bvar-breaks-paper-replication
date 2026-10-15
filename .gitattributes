@@ -1,0 +1,2 @@
+# Exact immutable research input snapshots: never normalize line endings.
+data/raw/*.csv -text

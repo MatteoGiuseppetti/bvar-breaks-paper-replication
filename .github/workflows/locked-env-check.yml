@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - ".github/workflows/locked-env-check.yml"
+      - ".gitattributes"
       - "renv.lock"
       - "renv/**"
       - "scripts/restore_environment.R"
@@ -13,6 +14,7 @@ on:
   pull_request:
     paths:
       - ".github/workflows/locked-env-check.yml"
+      - ".gitattributes"
       - "renv.lock"
       - "renv/**"
       - "scripts/restore_environment.R"
