@@ -1,0 +1,54 @@
+name: Generate article R dependency lock
+
+on:
+  push:
+    paths:
+      - ".github/workflows/renv-lock.yml"
+      - "scripts/bootstrap_renv.R"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out article repository
+        uses: actions/checkout@v4
+      - name: Install R 4.6.1
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "4.6.1"
+          use-public-rspm: true
+      - name: Install renv
+        run: Rscript --vanilla -e 'install.packages("renv", repos="https://cloud.r-project.org")'
+      - name: Build lockfile from installed packages
+        run: Rscript --vanilla scripts/bootstrap_renv.R
+      - name: Validate generated lock
+        run: |
+          python3 - <<'PY'
+          import json
+          with open("renv.lock", encoding="utf-8") as handle:
+              lock = json.load(handle)
+          assert lock["R"]["Version"] == "4.6.1", lock.get("R")
+          assert lock["Packages"]["posterior"]["Version"] == "1.7.0"
+          assert len(lock["Packages"]) >= 3, "Transitive dependencies not captured"
+          print("PASS: full package lock contains R 4.6.1, posterior 1.7.0 and transitive dependencies")
+          PY
+      - name: Validate locked packages and article inputs
+        run: |
+          Rscript --vanilla scripts/check_environment.R
+          Rscript --vanilla scripts/check_inputs.R
+          Rscript --vanilla -e 'paths <- c("code/paper/common.R", "code/paper/simulation_functions.R", "code/paper/simulation_three_breaks.R", "code/paper/empirical_application.R", "code/paper/run_paper.R"); invisible(lapply(paths, parse)); cat("PASS: article code parses\n")'
+      - name: Commit verified environment files to this branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f renv.lock renv/activate.R renv/settings.json
+          if git diff --cached --quiet; then
+            echo "No lockfile changes."
+          else
+            git commit -m "build: record generated R 4.6.1 renv dependency lock"
+            git push
+          fi
