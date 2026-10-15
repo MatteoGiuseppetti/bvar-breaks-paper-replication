@@ -1,6 +1,6 @@
 # Bayesian VAR structural breaks — paper replication code
 
-**Paper-only code is available. Numerical equality with the manuscript has not been independently verified through this repository.** The original thesis repository remains unchanged.
+**Paper-only code is available. C09 numerical reproduction: PASS for the selected paper results and historical thesis comparisons on the author's documented Windows/R system (2026-10-15).** Run evidence was reviewed against thesis tables at reported precision; this is **not** an independent third-party run, bitwise historical certification, cross-platform test, or versioned software release. See [C09 report](docs/C09_VERIFICATION_2026-10-15.md). The original thesis repository remains unchanged.
 
 ## Two distinct projects
 
@@ -33,6 +33,16 @@ The first two audit commands check **input format and source-code extraction onl
 
 All generated outputs, run logs, session metadata and figures go to separate, ignored `results/paper_<mode>_<timestamp>/` directories. The simulation can be computationally demanding: the final sampler performs 4 × 150,000 iterations. Do not start it expecting a quick smoke test.
 
+## Numerical reproduction evidence (C09)
+
+On 2026-10-15 the author successfully executed `-Mode Empirical`, `-Mode Simulation`, and `scripts/run_full_thesis.ps1` on Windows 11 with R 4.6.1 and `posterior` 1.7.0. The supplied outputs were compared with the thesis's Chapters 5 and 6, including the reported simulation tables (5.1–5.10), baseline empirical results (6.1–6.7), and K=8 robustness (6.8). All **compared** numerical quantities agreed at thesis table precision. The paper-only final three-break summary also matched the corresponding full-thesis output. The preliminary MCMC run in the thesis had different/poorer mixing diagnostics; it must not be confused with the final 150,000-iteration run.
+
+- [Detailed C09 report with source/output scope and SHA-256 manifest](docs/C09_VERIFICATION_2026-10-15.md)
+- [Machine-readable summary of 49 representative comparisons](docs/C09_NUMERICAL_COMPARISONS_2026-10-15.csv)
+- [Updated validation checklist and remaining limitations](docs/REPLICATION_STATUS.md)
+
+The author's original uploaded run logs, figures, empirical RDS and review reports were packed in a **separate user-delivered evidence ZIP** and have **not** been added to this public repository. Preserve the generated output directories and the simulation final RDS locally (its user-reported SHA-256 is in the C09 report). The original empirical run log/session data were not provided for review, and runtime/peak RAM were not instrumented.
+
 ## Files
 
 | Path | Description |
@@ -57,6 +67,6 @@ The original CSV snapshots for [PCECTPI](https://fred.stlouisfed.org/series/PCEC
 
 In the empirical likelihood, 2020Q2 is excluded with any row for which it is a response or a lagged predictor (a common lag-model mask). The break-count scores use **maximized/profile** integrated marginal likelihoods over partitions, not fully integrated break-count posteriors. K=4 and K=8 use different effective sample sizes.
 
-The paper-only code reuses unchanged original source statements (aside from line-ending normalization and file-output additions). **Code extraction is not yet an R execution result or a numerical replication certificate.** See [source mapping](docs/PAPER_CODE_MAP.md), [provenance](docs/PROVENANCE.md) and [replication status](docs/REPLICATION_STATUS.md).
+The paper-only code reuses unchanged original source statements (aside from line-ending normalization and file-output additions). Static extraction alone never establishes numerical equality; the separate, author-executed C09 evidence is described in the [numerical verification report](docs/C09_VERIFICATION_2026-10-15.md). See also [source mapping](docs/PAPER_CODE_MAP.md), [provenance](docs/PROVENANCE.md) and [replication status](docs/REPLICATION_STATUS.md).
 
-No definitive versioned software release, license or journal citation has yet been assigned. Until C09 evidence is assembled, cite this as an in-progress paper-code repository, not as a certified replication package.
+No definitive versioned software release, license or journal citation has yet been assigned. C09 user-run numerical checks are documented, but the repository is not a certified, independently cross-platform-tested replication release.
