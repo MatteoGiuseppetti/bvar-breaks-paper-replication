@@ -48,6 +48,8 @@ jobs:
         run: Rscript --vanilla scripts/check_environment.R
       - name: Validate immutable input snapshots
         run: Rscript --vanilla scripts/check_inputs.R
+      - name: Verify extracted article code and frozen inputs
+        run: python scripts/audit_paper_extraction.py
       - name: Parse article-only R modules (do not run models)
         run: |
           Rscript --vanilla -e "invisible(lapply(c('code/paper/common.R','code/paper/simulation_functions.R','code/paper/simulation_three_breaks.R','code/paper/empirical_application.R','code/paper/run_paper.R','scripts/run_paper_locked.R'), parse)); cat('PASS: all paper R modules parse successfully\\n')"
