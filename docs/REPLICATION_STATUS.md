@@ -1,6 +1,6 @@
 # Reproduction status and acceptance gates
 
-As of **2026-10-14**, this repository is a **work in progress**, with paper-only code extracted but numerical results still unverified. The original thesis code and the three input CSV snapshots have been transferred with matching Git blob hashes. This establishes file provenance, **not** numerical reproducibility.
+As of **2026-10-15**, the author has executed the paper-only empirical and selected simulation routes and the original full thesis program on Windows/R. Their numerical outputs were compared with the thesis at published precision. **C09 numerical verification: PASS for the documented author-executed scope**; this is not bitwise historical certification or an independent cross-platform release. See the [C09 numerical report](C09_VERIFICATION_2026-10-15.md) and [49-row comparison summary](C09_NUMERICAL_COMPARISONS_2026-10-15.csv). Static source/data provenance is documented separately.
 
 ## Completed static checks
 
