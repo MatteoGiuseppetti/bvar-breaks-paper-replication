@@ -1,79 +1,64 @@
-# Bayesian VAR structural breaks — paper replication
+# Bayesian VARs with Structural Breaks — Article and Supplementary Code
 
-**Reproducibility materials for the article on Bayesian VAR structural breaks and regime-specific blockwise lag uncertainty.** This repository is dedicated to the **article only**. The dissertation is a separate, historical project: its R code and frozen CSV data were used as **source materials**, but this repository does not need to call, clone, or update the dissertation repository.
+This repository contains the **self-contained R code and frozen input data for the research article** on structural breaks and regime-specific blockwise lag uncertainty, along with the experiments documented in its Supplementary Material.
 
-**Verification status (15 October 2026):** C09 author-executed numerical comparisons **PASS within the documented scope**. The paper-specific empirical and final three-break simulation routes and the historical full-source comparison were executed on Windows 11 / R 4.6.1 / `posterior` 1.7.0; compared quantities agree with the dissertation tables at reported precision. This does **not** establish independent third-party replication, bit-for-bit identity to unavailable historical artifacts, or cross-platform numerical equivalence. The separately tested **locked R dependency restore** passes on fresh GitHub Windows and Linux runners ([CI run](https://github.com/MatteoGiuseppetti/bvar-breaks-paper-replication/actions/runs/38754513020)); that CI does not run model estimation. See [C09 evidence](docs/C09_VERIFICATION_2026-10-15.md) and [replication status](docs/REPLICATION_STATUS.md).
+**Project boundary:** the dissertation is a **separate historical project**. Its code was consulted once to extract the *unchanged scientific statements* used here. There is no runtime dependency on that repository, no mirrored full thesis script and no full-thesis runner. The original dissertation repository is not part of this article's development workflow.
 
-## Scientific scope
+## Reproducible components
 
-The framework compares admissible structural-break configurations using regime-specific model-marginalized evidence from a conjugate Matrix-Normal–Inverse-Wishart BVAR. Candidate lag blocks can vary across regimes.
+| Location | Purpose |
+| --- | --- |
+| `code/paper/common.R` | Prior, model integration and shared BVAR functions |
+| `code/paper/simulation_functions.R` | MCMC and simulation diagnostics used in the article |
+| `code/paper/simulation_three_breaks.R` | Final dispersed-start three-break simulation in the article (also Supplement S1–S3) |
+| `code/paper/empirical_application.R` | Quarterly U.S. empirical analysis with K=4 and K=8 (also Supplement S4–S6) |
+| `code/supplementary/simulation_experiments.R` | **Verbatim original** one-break, two-break/exact-vs-MCMC, and break-count simulation statements (Supplement S7–S9) |
+| `scripts/run_paper.ps1` | Isolated paper execution: Empirical, Simulation, All |
+| `scripts/run_supplementary.ps1` | Isolated supplementary simulation execution, independent of the paper route |
+| `data/raw/` | Frozen `PCECTPI.csv`, `UNRATE.csv` and `FEDFUNDS.csv` snapshots |
+| `renv.lock`, `renv/` | Locked R dependencies |
+| `docs/ENVIRONMENT.md` | Environment setup and verification limitations |
 
-The **article** selects:
-- One simulated three-break design analyzed with the **final**, dispersed-start collapsed MCMC (four chains; 150,000 iterations per chain, 25,000 burn-in).
-- An empirical U.S. quarterly application involving PCE inflation, unemployment, and the federal funds rate; baseline maximum lag order **K=4** and robustness check **K=8**.
+**Important:** The supplementary R file preserves original instructions **unchanged**. It is the original contiguous source prefix, lines **1–2983**, ending before the thesis's three-break simulation. The supplementary runner only activates the locked environment, runs the preserved source in an isolated working directory and saves output objects afterward. No likelihood, prior, proposal, random seed, search grid or MCMC setting has been rewritten.
 
-Other historical dissertation experiments do **not** belong to the paper-only execution path. This repository makes no claim that a single simulated dataset proves general frequentist recovery/coverage.
+The Supplementary PDF describes *existing* thesis figures and tables; code execution may produce the underlying numeric evidence and original plotting calls, but it is **not** a pixel-identical regeneration of the typeset Supplementary PDF. No fresh MCMC or numerical comparison is claimed from the present repository reorganization.
 
-## Quick start — Windows PowerShell
+## Quick start: Windows PowerShell
 
-Prerequisites: **R 4.6.1**, `Rscript` on `PATH`, **Python 3** for the static extraction audit, an internet connection **once** to install locked R dependencies, and Windows PowerShell. Use a clean clone of **this repository**. Packages are installed into a project-local `renv` library.
+Install **R 4.6.1**, make `Rscript` available on `PATH`, and clone **this** repository. First install `renv` and restore the **20 pinned packages** (`posterior` 1.7.0 and its dependencies included):
 
 ```powershell
 git clone https://github.com/MatteoGiuseppetti/bvar-breaks-paper-replication.git
 cd bvar-breaks-paper-replication
-
-Rscript --version
 Rscript --vanilla -e "install.packages('renv', repos='https://cloud.r-project.org')"
 Rscript --vanilla scripts/restore_environment.R
+Rscript --vanilla scripts/check_environment.R
 Rscript --vanilla scripts/check_inputs.R
-python scripts/audit_paper_extraction.py
 
-# Fast relative to the simulation: empirical baseline and robustness
+# Main article empirical application: K=4 and K=8
 powershell -ExecutionPolicy Bypass -File scripts/run_paper.ps1 -Mode Empirical
 
-# Very expensive: four 150,000-iteration MCMC chains
+# Main article: final three-break, four-chain MCMC (computationally intensive)
 powershell -ExecutionPolicy Bypass -File scripts/run_paper.ps1 -Mode Simulation
 
-# Run both only if needed
-powershell -ExecutionPolicy Bypass -File scripts/run_paper.ps1 -Mode All
+# Supplementary historical simulations: S7, S8, S9 (computationally intensive)
+powershell -ExecutionPolicy Bypass -File scripts/run_supplementary.ps1
 ```
 
-The runner **requires and activates the lockfile environment** even though it executes the model inside an isolated results directory. It checks R and `posterior` versions before starting a model. Never replace the lockfile silently with packages from the current CRAN release. See [R environment instructions](docs/ENVIRONMENT.md) for setup, troubleshooting, and limits.
+The paper and supplementary runners write to independent, ignored `results/paper_<mode>_<timestamp>/` and `results/supplementary_<timestamp>/` directories. The supplementary runner captures a log, records `session_info.txt` and saves the generated `results` (one-break) and `results_2b` (two-break/MCMC/model-selection) objects as separate RDS files. It does not run the article's three-break model or empirical analysis.
 
-**Outputs:** each run writes figures, logs, `session_info.txt`, and generated artifacts into its own `results/paper_<mode>_<timestamp>/` directory. These are ignored by Git. The simulation can take substantial time; a passing input audit or successful R parse is **not** a model-execution check.
+For `renv` troubleshooting and platform limitations see [Environment](docs/ENVIRONMENT.md).
 
-## Repository map
+## Interpretation and verification
 
-| Location | Role |
-| --- | --- |
-| `code/paper/common.R` | Design, priors, segment evidence and shared numerical functions |
-| `code/paper/simulation_functions.R` | MCMC and diagnostic functions |
-| `code/paper/simulation_three_breaks.R` | **Final** article-selected three-break experiment |
-| `code/paper/empirical_application.R` | Empirical **K=4** and **K=8** analyses |
-| `code/paper/run_paper.R` | Scientific driver; sourced by the locked-environment wrapper |
-| `scripts/run_paper.ps1` | Isolated Windows paper runner |
-| `scripts/restore_environment.R` | Restore and check the project-local `renv` library |
-| `scripts/check_environment.R` | Fail early on an un-restored or mismatched environment |
-| `scripts/check_inputs.R` | Frozen CSV format/date checks |
-| `scripts/audit_paper_extraction.py` | Source-statement and input-snapshot integrity audit |
-| `code/reference/BVAR_thesis_full_code.R` | **Frozen provenance copy**, not imported or executed by paper runner |
-| `data/raw/*.csv` | Frozen source snapshots; no runtime downloads |
-| `renv.lock` | R package dependency versions, generated from an R environment |
-| `docs/` | Source mapping, provenance, reproduction evidence and limitations |
-| `.github/workflows/` | Static checks, R parsing and environment setup verification |
+On **15 October 2026**, author-executed numerical comparison of selected article outputs against the original dissertation **passed at reported table precision** under Windows 11 / R 4.6.1 / `posterior` 1.7.0. This is not a third-party replication or proof of bitwise/cross-platform numerical equivalence. A subsequent clean dependency restore and syntax/input checks passed on hosted Windows and Linux; those checks did **not** rerun the estimators.
 
-## Research integrity and provenance
+The previous internal validation reports (C09), statement-extraction mapping and original full-script copy have been removed from the **current repository tree** to focus on article deliverables. Previous records remain available through ordinary Git history, for example the [historical C09 report](https://github.com/MatteoGiuseppetti/bvar-breaks-paper-replication/blob/8a77692825366d52ec14987210de7a166be40c91/docs/C09_VERIFICATION_2026-10-15.md). **There are no GitHub Actions workflows** in the current tree; checks must be run manually.
 
-The inputs are frozen copies of FRED series `PCECTPI`, `UNRATE`, and `FEDFUNDS`; **do not substitute new FRED downloads** to reproduce the archived results. October 2025 is missing from the archived unemployment snapshot and is handled by the original quarterly processing logic. The empirical 2020Q2 exclusion also applies to any response or lagged-predictor row containing that quarter. K=4 and K=8 have different effective samples.
+The preserved inputs are the exact archived FRED snapshots (do not substitute newly downloaded series). The paper's empirical break-count criterion profiles integrated evidence over admissible partitions; it does not calculate a fully integrated posterior over break counts. The two-break exact-vs-MCMC experiment uses a deliberately **restricted local break grid**. One simulated DGP does not establish repeated-sampling coverage.
 
-The break-count comparisons are based on **profile/maximized** integrated marginal likelihood over partitions, not posterior probabilities fully integrated over break positions. Exact two-break/MCMC comparisons from historical experiments use a deliberately restricted local support. The paper code preserves these distinctions.
+### Scientific source and provenance
 
-- [Source provenance](docs/PROVENANCE.md) — original script and CSV Git hashes, and separation of the two projects
-- [Paper code map](docs/PAPER_CODE_MAP.md) — original source statements, selected and excluded blocks
-- [C09 report](docs/C09_VERIFICATION_2026-10-15.md) — numerical evidence, environment and caveats
-- [Numerical comparison CSV](docs/C09_NUMERICAL_COMPARISONS_2026-10-15.csv) — 49 representative checks
-- [Replication status](docs/REPLICATION_STATUS.md) — completed gates and outstanding work
+The supplementary experiment file is verbatim from historical `BVAR_thesis_full_code.R` lines 1–2983; the complete historical script's **Git blob SHA-1** is `85aee115a241877bfdca9deb53eb12bde0ce6cc3`. The existing article files also descend from that same original implementation. This hash and the linked historical Git record establish source provenance without requiring the dissertation repository to be cloned or executed.
 
-## Publication status
-
-The manuscript and standalone Online Appendix are separate editorial drafts awaiting supervisor feedback; they have **not** been published into this repository as final accepted material. No journal-specific final citation, software license, immutable versioned release, DOI, third-party independent run or verified cross-platform reproduction is claimed. The full generated evidence archive is retained separately, not committed here.
+The manuscript and standalone Supplementary Material remain subject to the professor's editorial feedback. No journal acceptance, independently certified numerical reproduction, versioned release, license or DOI is asserted.
